@@ -24,14 +24,10 @@ library(flexdashboard)
 clean_book <- function(book){
     local_book <- book
     local_book <- str_to_lower(local_book)
-    #local_book <- replace_contraction(local_book)
     local_book <- gsub("'s",'',local_book)
-    #local_book <- gsub('[[:punct:] ]+',' ',local_book)
     local_book <- gsub('[[:digit:] ]+',' ',local_book)
     local_book_list <- unlist(str_split(local_book, boundary('word')))
-    s.words <- stopwords()
-    local_book_list <- local_book_list[!(local_book_list)%in%c(stopwords(),'harry','said')]
-    #local_book_clean <- wordStem(local_book_list)
+    local_book_list <- local_book_list[!(local_book_list)%in%c(stopwords(),'harry','said','c')]
 }
 
 dicto <- function(clean_book){
