@@ -12,9 +12,10 @@ output:
 ```{r setup, include=FALSE}
 library(hash)
 library(stringr)
-library(SnowballC)
+#library(SnowballC)
 library(stopwords)
-library(textclean)
+#library(textclean)
+library(data.table)
 library(wordcloud2)
 library(harrypotter)
 library(flexdashboard)
@@ -28,9 +29,11 @@ clean_book <- function(book){
     #local_book <- replace_contraction(local_book)
     local_book <- gsub("'s",'',local_book)
     #local_book <- gsub('[[:punct:] ]+',' ',local_book)
+    local_book <- gsub('[[:digit:] ]+',' ',local_book)
     local_book_list <- unlist(str_split(local_book, boundary('word')))
     s.words <- stopwords()
-    local_book_dammit <- local_book_list[!(local_book_list)%in%stopwords()]
+    local_book_list <- local_book_list[!(local_book_list)%in%stopwords()]
+    #local_book_clean <- wordStem(local_book_list)
     
     # Remove contractions
     # Remove punctuation
@@ -50,13 +53,10 @@ books <- c(philosophers_stone,
            half_blood_prince,
            deathly_hallows)
 
+clean.ps <- clean_book(philosophers_stone)
 
-clean.ps <- clean_book(books[1])
-
-clean.ps
+#clean.ps
 ```
-
-
 
 
 ```{r make_dicto}
@@ -64,42 +64,20 @@ dicto <- function(clean_book){
   dicto <- hash()
   for(i in 1:length(clean_book)){
     word <- clean_book[i]
-    if(is.null(dicto[[as.character(eval(word))]])){
-      
+    ct <- dicto[[as.character(eval(word))]]
+    if(is.null(ct)){
+      dicto[[as.character(eval(word))]] <- 1
+    }
+    else{
+      dicto[[as.character(eval(word))]] <- (ct + 1)
     }
   }
+  dicto
 }
+
+dicto.ps <- dicto(clean.ps)
+df.ps <- as.data.frame(hash::values(dicto.ps))
+df.ps <- setDT(df.ps, keep.rownames = TRUE)[]
+colnames(df.ps) <- c('word','freq')
+wordcloud2(df.ps)
 ```
-
-
-
-
-#```{r make_dicto}
-pairwise_distances_full_map = function(df){
-  #------------------------------------------------------------------------------------------------------------------------
-  # Take pairwise n-dimensional Euclidean distances between all observations AND STORE THEM in a dictionary of dictionaries
-  #------------------------------------------------------------------------------------------------------------------------
-  len = nrow(df)
-  outerDicto = hash()
-  i = 1
-  # Create a hashtable with the pairwise distances for that polygon and all the polygons numbered higher than it
-  while(i < len){
-    pol1 = df[i, ]
-    localDicto = hash()
-    j = i + 1
-    while(j <= len){
-      pol2 = df[j, ]
-      distance = dist(rbind(pol1,pol2))
-      .set(localDicto, keys = j, values = distance[1])
-      j = j + 1
-    }
-    .set(outerDicto, keys = i, values = localDicto)
-    i = i + 1
-  }
-  outerDicto
-}
-
-
-
-distance = dicto[[as.character(eval(pol1))]][[as.character(eval(pol2))]]
-#```
