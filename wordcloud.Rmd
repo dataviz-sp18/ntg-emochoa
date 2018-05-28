@@ -1,0 +1,20 @@
+---
+title: 'Accio Title!'
+author: 'Erin M. Ochoa'
+date: '2018 May 29'
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    theme: flatly
+---
+
+```{r setup, include=FALSE}
+library(wordcloud2)
+library(harrypotter)
+library(flexdashboard)
+```
+
+
+
+
