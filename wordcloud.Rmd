@@ -4,8 +4,7 @@ author: 'Erin M. Ochoa'
 date: '2018 May 29'
 output: 
   flexdashboard::flex_dashboard:
-    orientation: columns
-    vertical_layout: fill
+    storyboard: true
     theme: flatly
 ---
 
@@ -34,13 +33,38 @@ clean_book <- function(book){
     s.words <- stopwords()
     local_book_list <- local_book_list[!(local_book_list)%in%stopwords()]
     #local_book_clean <- wordStem(local_book_list)
-    
-    # Remove contractions
-    # Remove punctuation
-    # Remove plurals
-    # Split into string
-    # Remove stopwords
-    # Return list of words
+}
+
+dicto <- function(clean_book){
+  dicto <- hash()
+  for(i in 1:length(clean_book)){
+    word <- clean_book[i]
+    ct <- dicto[[as.character(eval(word))]]
+    if(is.null(ct)){
+      dicto[[as.character(eval(word))]] <- 1
+    }
+    else{
+      dicto[[as.character(eval(word))]] <- (ct + 1)
+    }
+  }
+  dicto
+}
+
+dicto2df <- function(dicto){
+  df <- as.data.frame(hash::values(dicto))
+  df <- setDT(df, keep.rownames = TRUE)[]
+  colnames(df) <- c('word','freq')
+  df
+}
+
+book2cloud <- function(book,num){
+  clean_book <- clean_book(book)
+  dicto <- dicto(clean_book)
+  df <- dicto2df(dicto)
+  set.seed(1337)
+  #wordcloud2(df)
+  letterCloud(data = df, word = num,size=2)
+  #wordcloud2(df, figPath = '/Users/erin/Desktop/GitHub/emochoa/uc-dataviz/ntg-emochoa/twitter.jpg')
 }
 ```
 
@@ -58,26 +82,46 @@ clean.ps <- clean_book(philosophers_stone)
 #clean.ps
 ```
 
+### Philosopher's Stone
 
-```{r make_dicto}
-dicto <- function(clean_book){
-  dicto <- hash()
-  for(i in 1:length(clean_book)){
-    word <- clean_book[i]
-    ct <- dicto[[as.character(eval(word))]]
-    if(is.null(ct)){
-      dicto[[as.character(eval(word))]] <- 1
-    }
-    else{
-      dicto[[as.character(eval(word))]] <- (ct + 1)
-    }
-  }
-  dicto
-}
+```{r cloud1}
+cloud.ps <-  book2cloud(philosophers_stone,'1')
+cloud.ps
+```
 
-dicto.ps <- dicto(clean.ps)
-df.ps <- as.data.frame(hash::values(dicto.ps))
-df.ps <- setDT(df.ps, keep.rownames = TRUE)[]
-colnames(df.ps) <- c('word','freq')
-wordcloud2(df.ps)
+### Chamber of Secrets
+```{r cloud2}
+cloud.cos <-  book2cloud(chamber_of_secrets,'2')
+cloud.cos
+```
+
+
+### Prizoner of Azkaban
+```{r cloud3}
+cloud.poa <-  book2cloud(prisoner_of_azkaban,'3')
+cloud.poa
+```
+
+### Goblet of Fire
+```{r cloud4}
+cloud.gof <-  book2cloud(goblet_of_fire,'4')
+cloud.gof
+```
+
+### Order of the Phoenix
+```{r cloud5}
+cloud.otp <-  book2cloud(order_of_the_phoenix,'5')
+cloud.otp
+```
+
+### Half-Blood Prince
+```{r cloud6}
+cloud.hbp <-  book2cloud(half_blood_prince,'6')
+cloud.hbp
+```
+
+### Deathly Hallows
+```{r cloud7}
+cloud.dh <-  book2cloud(deathly_hallows,'7')
+cloud.dh
 ```
