@@ -1,19 +1,18 @@
 ---
-title: 'Accio Title!'
+title: 'Harry Potter and the Word Cloud Visualizations'
 author: 'Erin M. Ochoa'
 date: '2018 May 29'
 output: 
   flexdashboard::flex_dashboard:
-    storyboard: true
+    orientation: rows
+    vertical_layout: fill
     theme: flatly
 ---
 
 ```{r setup, include=FALSE}
 library(hash)
 library(stringr)
-#library(SnowballC)
 library(stopwords)
-#library(textclean)
 library(data.table)
 library(wordcloud2)
 library(harrypotter)
@@ -31,7 +30,7 @@ clean_book <- function(book){
     local_book <- gsub('[[:digit:] ]+',' ',local_book)
     local_book_list <- unlist(str_split(local_book, boundary('word')))
     s.words <- stopwords()
-    local_book_list <- local_book_list[!(local_book_list)%in%c(stopwords(),'harry','said')]
+    local_book_list <- local_book_list[!(local_book_list)%in%c(stopwords(),'harry','said','back','around')]
     #local_book_clean <- wordStem(local_book_list)
 }
 
@@ -54,74 +53,74 @@ dicto2df <- function(dicto){
   df <- as.data.frame(hash::values(dicto))
   df <- setDT(df, keep.rownames = TRUE)[]
   colnames(df) <- c('word','freq')
-  df
+  df <- df[order(freq, decreasing = TRUE),]
+  #hermione <- df$freq[df$word == 'hermione']
+  
+  hermione <- df$word == 'hermione'
+  df <- rbind(df[hermione,], df[!hermione,])
+  
+  #print(head(df))
+  #df[df$freq > 110]
 }
 
-book2cloud <- function(book,num){
+book2cloud <- function(book,num,color){
   clean_book <- clean_book(book)
   dicto <- dicto(clean_book)
   df <- dicto2df(dicto)
   set.seed(1337)
-  wordcloud2(df)
+  wordcloud2(df,backgroundColor = 'black', color = color, fontFamily = 'sans-serif',fontWeight='normal',
+             minRotation = -pi/2, maxRotation = pi/2,rotateRatio = 0.5)#'random-light')#monospace
   #letterCloud(data = df, word = num,size=2)
   #wordcloud2(df, figPath = '/Users/erin/Desktop/GitHub/emochoa/uc-dataviz/ntg-emochoa/twitter.jpg')
 }
 ```
 
-```{r clean_text}
-books <- c(philosophers_stone,
-           chamber_of_secrets,
-           prisoner_of_azkaban,
-           goblet_of_fire,
-           order_of_the_phoenix,
-           half_blood_prince,
-           deathly_hallows)
-
-clean.ps <- clean_book(philosophers_stone)
-
-#clean.ps
-```
+Row
+---
 
 ### Philosopher's Stone
 
 ```{r cloud1}
-cloud.ps <-  book2cloud(philosophers_stone,'1')
+cloud.ps <-  book2cloud(philosophers_stone,'1','red')
 cloud.ps
 ```
 
 ### Chamber of Secrets
 ```{r cloud2}
-cloud.cos <-  book2cloud(chamber_of_secrets,'2')
+cloud.cos <-  book2cloud(chamber_of_secrets,'2','springgreen')
 cloud.cos
 ```
 
 
 ### Prizoner of Azkaban
 ```{r cloud3}
-cloud.poa <-  book2cloud(prisoner_of_azkaban,'3')
+cloud.poa <-  book2cloud(prisoner_of_azkaban,'3','tan')
 cloud.poa
 ```
 
 ### Goblet of Fire
 ```{r cloud4}
-cloud.gof <-  book2cloud(goblet_of_fire,'4')
+cloud.gof <-  book2cloud(goblet_of_fire,'4','gold')
 cloud.gof
 ```
 
+Row
+---
+
 ### Order of the Phoenix
 ```{r cloud5}
-cloud.otp <-  book2cloud(order_of_the_phoenix,'5')
+cloud.otp <-  book2cloud(order_of_the_phoenix,'5','skyblue')
 cloud.otp
 ```
 
 ### Half-Blood Prince
 ```{r cloud6}
-cloud.hbp <-  book2cloud(half_blood_prince,'6')
+cloud.hbp <-  book2cloud(half_blood_prince,'6','silver')
 cloud.hbp
 ```
 
 ### Deathly Hallows
 ```{r cloud7}
-cloud.dh <-  book2cloud(deathly_hallows,'7')
+cloud.dh <-  book2cloud(deathly_hallows,'7','darkorange')
 cloud.dh
 ```
