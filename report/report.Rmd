@@ -1,0 +1,32 @@
+---
+title: "Text Visualization Write-up"
+author: "Erin M. Ochoa"
+date: "2018/05/29"
+class: 'Data Visualization'
+professor: 'Dr. Soltoff'
+output: github_document
+---
+
+# Overview
+
+<p align=justify>The visualization I created for this assignment shows seven individual word clouds, one for each book in the <i>Harry Potter</i> series. </p>
+
+<p align=justify></p>
+
+# The Word Cloud as a Medium
+
+<p align=justify></p>
+
+<p align=justify></p>
+
+# Challenges
+
+<p align=justify>I encountered a series of challenges in creating the word clouds. It turns out that flexdashboard's storyboard format will not render word clouds on slides beyond the first; beacuse I wanted to implement the visualization in a single file, this ruled out the possibility of creating seven full-sized clouds. I then placed all seven word clouds in a single row on a single page, which I liked (as the seven long, narrow clouds fittingly resembled book spines on a shelf), but longer words like <i>hermione</i> and <i>dunmbledore</i> almost never appeared in these clouds. Even in the final sizes, the word <i>hermione</i> only sometimes shows up, despite it being among the top five most common words in each book. This appears to be related to what I hope is a bug (and not a feature) in wordcloud2 that places words in alphabetical, but only if they appear to fit into the current cloud layout. I attempted to take advantage of this by sorting by frequency and then moving <i>hermione</i> to the top of the dataframe</p>; it now appears in word clouds more frequently but still rarely.
+
+
+
+In addition to the visualization, write an approximately 500 word explanation defending your design choices. This includes (but is not limited to):
+
+What is the story?
+Why did you select this graphical form?
+What challenges did you encounter in creating the visualization?
